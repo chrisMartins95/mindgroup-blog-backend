@@ -15,6 +15,6 @@ CREATE TABLE IF NOT EXISTS articles (
     autor_id INT NOT NULL,
     data_publicacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     data_alteracao TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    imagem LONGBLOB,
+    imagem VARCHAR(255), -- mudou de LONGBLOB para caminho da imagem (string)
     FOREIGN KEY (autor_id) REFERENCES users(id) ON DELETE CASCADE
 );

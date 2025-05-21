@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import path from "path";
 import { userRoutes } from "./routes/user.routes";
 import { authRoutes } from "./routes/auth.routes";
 import { articleRoutes } from "./routes/article.routes";
@@ -22,3 +23,5 @@ app.listen(PORT, () => {
 app.use("/api/auth", authRoutes);
 
 app.use("/api/articles", articleRoutes);
+
+app.use("/uploads", express.static(path.join(__dirname, "..", "uploads")));

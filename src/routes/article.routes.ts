@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { authenticateToken } from "../middlewares/auth.middleware";
+import { upload } from "../middlewares/upload.middleware"; // ⬅️ Importa o multer
 
 import {
   createArticleController,
@@ -11,11 +12,13 @@ import {
 
 export const articleRoutes = Router();
 
-// Todas rotas exceto GET / são protegidas
-articleRoutes.post("/", authenticateToken, createArticleController);
-articleRoutes.put("/:id", authenticateToken, updateArticleController);
+// ✅ Rotas com upload (usar o middleware do multer)
+articleRoutes.post("/", authenticateToken, upload.single("imagem"), createArticleController);
+articleRoutes.put("/:id", authenticateToken, upload.single("imagem"), updateArticleController);
+
+// 🔒 Protegida, sem upload
 articleRoutes.delete("/:id", authenticateToken, deleteArticleController);
 
-// Rotas públicas para listar artigos e detalhes
+// 🌐 Públicas
 articleRoutes.get("/", getAllArticlesController);
 articleRoutes.get("/:id", getArticleByIdController);

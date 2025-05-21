@@ -1,16 +1,19 @@
-# Blog Backend
+# 📰 Blog Backend
 
-API do sistema de blog com login, cadastro e CRUD de artigos.
+API RESTful desenvolvida com Node.js para um sistema de blog que permite autenticação de usuários, criação, edição e exclusão de artigos, além de upload de imagem destacada.
 
-## Tecnologias
-- Node.js
-- Express
-- MySQL
-- TypeScript
-- bcrypt
-- JWT
+## 🚀 Tecnologias Utilizadas
 
-## Como rodar
-1. Instale dependências:
+- **Node.js** + **Express** – Backend e roteamento  
+- **TypeScript** – Tipagem estática  
+- **MySQL** – Banco de dados relacional  
+- **JWT (JSON Web Token)** – Autenticação baseada em tokens  
+- **bcrypt** – Criptografia de senhas  
+- **Multer** – Upload de arquivos (imagens)  
+
+## 🛠️ Como rodar o projeto localmente
+
+Clone o repositório:  
 ```bash
-npm install
+git clone https://github.com/seu-usuario/mindgroup-blog-backend.git
+cd mindgroup-blog-backend

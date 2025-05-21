@@ -9,8 +9,9 @@ import {
 } from "../models/article.model";
 
 export async function createArticleController(req: Request, res: Response) {
-  const user = (req as any).user; // do middleware
+  const user = (req as any).user;
   const { titulo, conteudo } = req.body;
+  const imagem = req.file?.filename; // <-- Novo
 
   try {
     if (!titulo || !conteudo) {
@@ -22,6 +23,7 @@ export async function createArticleController(req: Request, res: Response) {
       titulo,
       conteudo,
       autor_id: user.id,
+      imagem, // <-- Novo
     });
 
     res.status(201).json({ message: "Artigo criado com sucesso" });
@@ -63,6 +65,7 @@ export async function updateArticleController(req: Request, res: Response) {
   const user = (req as any).user;
   const id = Number(req.params.id);
   const { titulo, conteudo } = req.body;
+  const imagem = req.file?.filename; // <-- Novo
 
   if (isNaN(id)) {
     res.status(400).json({ error: "ID inválido" });
@@ -79,6 +82,7 @@ export async function updateArticleController(req: Request, res: Response) {
       titulo,
       conteudo,
       autor_id: user.id,
+      imagem, // <-- Novo
     });
     res.json({ message: "Artigo atualizado com sucesso" });
   } catch (err: any) {

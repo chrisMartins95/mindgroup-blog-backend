@@ -4,19 +4,24 @@ export interface Article {
   id?: number;
   titulo: string;
   conteudo: string;
-  autor_id: number;   // FK para usuário
+  autor_id: number; // FK para usuário
   data_publicacao?: Date;
   data_alteracao?: Date;
-  imagem?: Buffer | null; // Para imagem (opcional)
+  imagem?: string | null; // agora é o nome do arquivo salvo
 }
 
 // Criar artigo
 export async function createArticle(article: Article): Promise<void> {
   const sql = `
-    INSERT INTO articles (titulo, conteudo, autor_id, data_publicacao, data_alteracao)
-    VALUES (?, ?, ?, NOW(), NOW())
+    INSERT INTO articles (titulo, conteudo, autor_id, imagem, data_publicacao, data_alteracao)
+    VALUES (?, ?, ?, ?, NOW(), NOW())
   `;
-  await connection.query(sql, [article.titulo, article.conteudo, article.autor_id]);
+  await connection.query(sql, [
+    article.titulo,
+    article.conteudo,
+    article.autor_id,
+    article.imagem ?? null,
+  ]);
 }
 
 // Listar artigos
@@ -36,10 +41,16 @@ export async function getArticleById(id: number): Promise<Article | null> {
 export async function updateArticle(article: Article): Promise<void> {
   const sql = `
     UPDATE articles 
-    SET titulo = ?, conteudo = ?, data_alteracao = NOW() 
+    SET titulo = ?, conteudo = ?, imagem = ?, data_alteracao = NOW() 
     WHERE id = ? AND autor_id = ?
   `;
-  await connection.query(sql, [article.titulo, article.conteudo, article.id, article.autor_id]);
+  await connection.query(sql, [
+    article.titulo,
+    article.conteudo,
+    article.imagem ?? null,
+    article.id,
+    article.autor_id,
+  ]);
 }
 
 // Deletar artigo
