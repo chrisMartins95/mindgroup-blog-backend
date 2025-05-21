@@ -1,0 +1,2 @@
+banco mysql porta (por padrão: 3306)
+Root Account Password: MindBlog123!
