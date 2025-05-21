@@ -3,6 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import { userRoutes } from "./routes/user.routes";
 import { authRoutes } from "./routes/auth.routes";
+import { articleRoutes } from "./routes/article.routes";
 
 dotenv.config();
 
@@ -19,3 +20,5 @@ app.listen(PORT, () => {
 });
 
 app.use("/api/auth", authRoutes);
+
+app.use("/api/articles", articleRoutes);
