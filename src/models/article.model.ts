@@ -1,17 +1,18 @@
-import { connection } from "../database/connection";
+import { connection } from "../database/connection"; // Importa a conexão com o banco de dados
 
+// Interface que representa um artigo
 export interface Article {
-  id?: number;
-  titulo: string;
-  conteudo: string;
-  autor_id: number;
-  data_publicacao?: Date;
-  data_alteracao?: Date;
-  imagem?: string | null;
-  nome?: string; // nome do autor (opcional)
+  id?: number; // ID do artigo (opcional, pois é gerado pelo banco)
+  titulo: string; // Título do artigo
+  conteudo: string; // Conteúdo do artigo
+  autor_id: number; // ID do autor (referência ao usuário)
+  data_publicacao?: Date; // Data de publicação (opcional)
+  data_alteracao?: Date; // Data da última alteração (opcional)
+  imagem?: string | null; // Caminho da imagem do artigo (opcional)
+  nome?: string; // Nome do autor (opcional, usado em joins)
 }
 
-// Criar artigo
+// Função para criar um novo artigo
 export async function createArticle(article: Article): Promise<void> {
   const sql = `
     INSERT INTO articles (titulo, conteudo, autor_id, imagem, data_publicacao, data_alteracao)
@@ -21,11 +22,11 @@ export async function createArticle(article: Article): Promise<void> {
     article.titulo,
     article.conteudo,
     article.autor_id,
-    article.imagem ?? null,
+    article.imagem ?? null, // Se não houver imagem, salva como null
   ]);
 }
 
-// Listar todos os artigos (com nome do autor)
+// Função para listar todos os artigos, trazendo também o nome do autor
 export async function getAllArticles(): Promise<Article[]> {
   const sql = `
     SELECT 
@@ -39,7 +40,7 @@ export async function getAllArticles(): Promise<Article[]> {
   return rows as Article[];
 }
 
-// 🔍 Buscar artigo por ID (com nome do autor)
+// Função para buscar um artigo pelo ID, trazendo também o nome do autor
 export async function getArticleById(id: number): Promise<Article | null> {
   const sql = `
     SELECT 
@@ -51,10 +52,10 @@ export async function getArticleById(id: number): Promise<Article | null> {
   `;
   const [rows] = await connection.query(sql, [id]);
   const articles = rows as Article[];
-  return articles.length > 0 ? articles[0] : null;
+  return articles.length > 0 ? articles[0] : null; // Retorna o artigo ou null se não encontrar
 }
 
-// ✏️ Atualizar artigo
+// Função para atualizar um artigo (apenas pelo autor)
 export async function updateArticle(article: Article): Promise<void> {
   const sql = `
     UPDATE articles 
@@ -70,13 +71,13 @@ export async function updateArticle(article: Article): Promise<void> {
   ]);
 }
 
-// 🗑️ Deletar artigo
+// Função para deletar um artigo (apenas pelo autor)
 export async function deleteArticle(id: number, autor_id: number): Promise<void> {
   const sql = `DELETE FROM articles WHERE id = ? AND autor_id = ?`;
   await connection.query(sql, [id, autor_id]);
 }
 
-// ✅ 🔐 NOVA FUNÇÃO: Listar artigos do usuário logado
+// Função para listar todos os artigos de um usuário específico (usada para área do usuário)
 export async function getArticlesByUserId(userId: number): Promise<Article[]> {
   const sql = `
     SELECT 
