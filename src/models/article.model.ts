@@ -4,10 +4,11 @@ export interface Article {
   id?: number;
   titulo: string;
   conteudo: string;
-  autor_id: number; // FK para usuário
+  autor_id: number;
   data_publicacao?: Date;
   data_alteracao?: Date;
-  imagem?: string | null; // agora é o nome do arquivo salvo
+  imagem?: string | null;
+  nome?: string; // nome do autor (opcional)
 }
 
 // Criar artigo
@@ -24,20 +25,36 @@ export async function createArticle(article: Article): Promise<void> {
   ]);
 }
 
-// Listar artigos
+// Listar todos os artigos (com nome do autor)
 export async function getAllArticles(): Promise<Article[]> {
-  const [rows] = await connection.query("SELECT * FROM articles ORDER BY data_publicacao DESC");
+  const sql = `
+    SELECT 
+      a.id, a.titulo, a.conteudo, a.autor_id, a.data_publicacao, a.data_alteracao, a.imagem,
+      u.nome AS nome
+    FROM articles a
+    JOIN users u ON a.autor_id = u.id
+    ORDER BY a.data_publicacao DESC
+  `;
+  const [rows] = await connection.query(sql);
   return rows as Article[];
 }
 
-// Buscar artigo por ID
+// 🔍 Buscar artigo por ID (com nome do autor)
 export async function getArticleById(id: number): Promise<Article | null> {
-  const [rows] = await connection.query("SELECT * FROM articles WHERE id = ?", [id]);
+  const sql = `
+    SELECT 
+      a.id, a.titulo, a.conteudo, a.autor_id, a.data_publicacao, a.data_alteracao, a.imagem,
+      u.nome AS nome
+    FROM articles a
+    JOIN users u ON a.autor_id = u.id
+    WHERE a.id = ?
+  `;
+  const [rows] = await connection.query(sql, [id]);
   const articles = rows as Article[];
   return articles.length > 0 ? articles[0] : null;
 }
 
-// Atualizar artigo
+// ✏️ Atualizar artigo
 export async function updateArticle(article: Article): Promise<void> {
   const sql = `
     UPDATE articles 
@@ -53,8 +70,23 @@ export async function updateArticle(article: Article): Promise<void> {
   ]);
 }
 
-// Deletar artigo
+// 🗑️ Deletar artigo
 export async function deleteArticle(id: number, autor_id: number): Promise<void> {
   const sql = `DELETE FROM articles WHERE id = ? AND autor_id = ?`;
   await connection.query(sql, [id, autor_id]);
+}
+
+// ✅ 🔐 NOVA FUNÇÃO: Listar artigos do usuário logado
+export async function getArticlesByUserId(userId: number): Promise<Article[]> {
+  const sql = `
+    SELECT 
+      a.id, a.titulo, a.conteudo, a.autor_id, a.data_publicacao, a.data_alteracao, a.imagem,
+      u.nome AS nome
+    FROM articles a
+    JOIN users u ON a.autor_id = u.id
+    WHERE a.autor_id = ?
+    ORDER BY a.data_publicacao DESC
+  `;
+  const [rows] = await connection.query(sql, [userId]);
+  return rows as Article[];
 }

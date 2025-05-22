@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { authenticateToken } from "../middlewares/auth.middleware";
-import { upload } from "../middlewares/upload.middleware"; // ⬅️ Importa o multer
+import { upload } from "../middlewares/upload.middleware"; // ⬅️ multer
 
 import {
   createArticleController,
@@ -8,6 +8,7 @@ import {
   getArticleByIdController,
   updateArticleController,
   deleteArticleController,
+  getMyArticlesController, // ✅ ADICIONADO AQUI
 } from "../controllers/article.controller";
 
 export const articleRoutes = Router();
@@ -16,8 +17,9 @@ export const articleRoutes = Router();
 articleRoutes.post("/", authenticateToken, upload.single("imagem"), createArticleController);
 articleRoutes.put("/:id", authenticateToken, upload.single("imagem"), updateArticleController);
 
-// 🔒 Protegida, sem upload
+// 🔒 Protegidas
 articleRoutes.delete("/:id", authenticateToken, deleteArticleController);
+articleRoutes.get("/meus", authenticateToken, getMyArticlesController); // ✅ NOVA ROTA
 
 // 🌐 Públicas
 articleRoutes.get("/", getAllArticlesController);

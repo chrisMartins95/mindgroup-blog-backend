@@ -5,13 +5,14 @@ import {
   getAllArticles, 
   getArticleById, 
   updateArticle, 
-  deleteArticle 
+  deleteArticle,
+  getArticlesByUserId // ⬅️ IMPORTANTE: certifique-se de ter isso no model
 } from "../models/article.model";
 
 export async function createArticleController(req: Request, res: Response) {
   const user = (req as any).user;
   const { titulo, conteudo } = req.body;
-  const imagem = req.file?.filename; // <-- Novo
+  const imagem = req.file?.filename;
 
   try {
     if (!titulo || !conteudo) {
@@ -23,7 +24,7 @@ export async function createArticleController(req: Request, res: Response) {
       titulo,
       conteudo,
       autor_id: user.id,
-      imagem, // <-- Novo
+      imagem,
     });
 
     res.status(201).json({ message: "Artigo criado com sucesso" });
@@ -65,7 +66,7 @@ export async function updateArticleController(req: Request, res: Response) {
   const user = (req as any).user;
   const id = Number(req.params.id);
   const { titulo, conteudo } = req.body;
-  const imagem = req.file?.filename; // <-- Novo
+  const imagem = req.file?.filename;
 
   if (isNaN(id)) {
     res.status(400).json({ error: "ID inválido" });
@@ -82,7 +83,7 @@ export async function updateArticleController(req: Request, res: Response) {
       titulo,
       conteudo,
       autor_id: user.id,
-      imagem, // <-- Novo
+      imagem,
     });
     res.json({ message: "Artigo atualizado com sucesso" });
   } catch (err: any) {
@@ -104,5 +105,17 @@ export async function deleteArticleController(req: Request, res: Response) {
     res.json({ message: "Artigo deletado com sucesso" });
   } catch (err: any) {
     res.status(500).json({ error: err.message });
+  }
+}
+
+export async function getMyArticlesController(req: Request, res: Response) {
+  const userId = (req as any).user.id;
+
+  try {
+    const articles = await getArticlesByUserId(userId); // <-- usa função do model
+    res.json(articles);
+  } catch (err: any) {
+    console.error("Erro ao buscar artigos do usuário:", err);
+    res.status(500).json({ error: "Erro ao buscar seus artigos" });
   }
 }

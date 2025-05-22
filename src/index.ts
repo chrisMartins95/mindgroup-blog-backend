@@ -14,14 +14,12 @@ app.use(express.json());
 
 // Rotas
 app.use("/api/users", userRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/articles", articleRoutes);
+
+app.use("/uploads", express.static(path.join(__dirname, "..", "uploads")));
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Servidor rodando na porta ${PORT}`);
 });
-
-app.use("/api/auth", authRoutes);
-
-app.use("/api/articles", articleRoutes);
-
-app.use("/uploads", express.static(path.join(__dirname, "..", "uploads")));
